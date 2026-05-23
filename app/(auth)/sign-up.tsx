@@ -6,10 +6,12 @@ import { ActivityIndicator, Image, ScrollView, Text, TextInput, TouchableOpacity
 type SignUpFieldErrors = {
   emailAddress?: string
   password?: string
+  code?: string
   form?: string
 }
 
 type ClerkErrorItem = {
+  code?: string
   message?: string
   longMessage?: string
   meta?: {
@@ -27,6 +29,8 @@ const clerkFieldMap: Record<string, keyof SignUpFieldErrors> = {
   email_address: 'emailAddress',
   emailAddress: 'emailAddress',
   password: 'password',
+  code: 'code',
+  verification_code: 'code',
 }
 
 function getClerkMessage(error: ClerkErrorItem) {
@@ -39,7 +43,11 @@ function mapClerkErrors(error: unknown): SignUpFieldErrors {
 
   if (Array.isArray(clerkError.errors)) {
     clerkError.errors.forEach((item) => {
-      const field = item.meta?.paramName ? clerkFieldMap[item.meta.paramName] : undefined
+      const field = item.meta?.paramName
+        ? clerkFieldMap[item.meta.paramName]
+        : item.code?.includes('verification') || item.code?.includes('code')
+          ? 'code'
+          : undefined
       const message = getClerkMessage(item)
 
       if (field) {
@@ -71,6 +79,9 @@ export default function SignUP() {
   const [code, setCode] = useState('')
 
   const isLoading = fetchStatus === 'fetching'
+  const isVerifyingEmail =
+    signUp.status === 'missing_requirements' &&
+    signUp.unverifiedFields.includes('email_address')
 
   if(signUp.status === 'complete' || isSignedIn) {
     return null
@@ -107,12 +118,25 @@ export default function SignUP() {
     }
 
     setFieldErrors({})
-    if (!error) await signUp.verifications.sendEmailCode()
+
+    const { error: verificationError } = await signUp.verifications.sendEmailCode()
+
+    if (verificationError) {
+      console.log(JSON.stringify(verificationError, null, 2))
+      setFieldErrors(mapClerkErrors(verificationError))
+      return
+    }
+
   }
 
   const onVerifyEmailPress = async () => {
+    if (!code.trim()) {
+      setFieldErrors({ code: 'Verification code is required.' })
+      return
+    }
+
     const { error } = await signUp.verifications.verifyEmailCode({
-      code,
+      code: code.trim(),
     })
 
     if (error) {
@@ -121,23 +145,35 @@ export default function SignUP() {
       return
     }
 
-    if(signUp.status === 'complete') {
-      await signUp.finalize({
-        navigate: ({ decorateUrl }) => {
-          const url = decorateUrl('/')
-          router.replace(url as any)
-        }
-      })
+    const { error: finalizeError } = await signUp.finalize({
+      navigate: ({ decorateUrl }) => {
+        const url = decorateUrl('/')
+        router.replace(url as any)
+      }
+    })
+
+    if (finalizeError) {
+      console.log(JSON.stringify(finalizeError, null, 2))
+      setFieldErrors(mapClerkErrors(finalizeError))
+      return
     }
 
     setFieldErrors({})
   }
 
-  if (
-    signUp.status === 'missing_requirements' ||
-    signUp.unverifiedFields.includes('email_address') ||
-    signUp.missingFields.length === 0
-  ) return (
+  const onResendCodePress = async () => {
+    const { error } = await signUp.verifications.sendEmailCode()
+
+    if (error) {
+      console.log(JSON.stringify(error, null, 2))
+      setFieldErrors(mapClerkErrors(error))
+      return
+    }
+
+    setFieldErrors({})
+  }
+
+  if (isVerifyingEmail) return (
     <View className="flex-1 justify-center px-6 py-12">
       <Image
         source={require('../../assets/images/realstate.png')}
@@ -157,12 +193,15 @@ export default function SignUP() {
         keyboardType="number-pad"
         autoCapitalize="none"
         value={code}
-        onChangeText={setCode}
+        onChangeText={(value) => {
+          setCode(value)
+          clearFieldError('code')
+        }}
       />
       {
         fieldErrors.code && (
           <Text className="text-red-500 text-sm mb-4">
-            {fieldErrors.code.message}
+            {fieldErrors.code}
           </Text>
         )
       }
@@ -178,7 +217,7 @@ export default function SignUP() {
         }
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => signUp.verifications.sendEmailCode()} className="py-2">
+      <TouchableOpacity onPress={onResendCodePress} disabled={isLoading} className="py-2">
         <Text className="text-blue-600">
           I need a new code
         </Text>
