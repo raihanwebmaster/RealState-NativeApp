@@ -83,7 +83,7 @@ export default function SignUP() {
     signUp.status === 'missing_requirements' &&
     signUp.unverifiedFields.includes('email_address')
 
-  if(signUp.status === 'complete' || isSignedIn) {
+  if (signUp.status === 'complete' || isSignedIn) {
     return null
   }
 
@@ -173,6 +173,22 @@ export default function SignUP() {
     setFieldErrors({})
   }
 
+  const onStartOverPress = async () => {
+    const { error } = await signUp.reset()
+
+    if (error) {
+      setFieldErrors(mapClerkErrors(error))
+      return
+    }
+
+    setFirstName('')
+    setLastName('')
+    setEmail('')
+    setPassword('')
+    setCode('')
+    setFieldErrors({})
+  }
+
   if (isVerifyingEmail) return (
     <View className="flex-1 justify-center px-6 py-12">
       <Image
@@ -184,7 +200,7 @@ export default function SignUP() {
         Verify Your Email
       </Text>
       <Text className="text-gray-500 mb-8">
-        We emailed you the code to complete your sign up. Please enter it below.
+        We sent a code to {signUp.emailAddress}. Enter it below to complete your sign up.
       </Text>
       <TextInput
         className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4"
@@ -218,8 +234,13 @@ export default function SignUP() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={onResendCodePress} disabled={isLoading} className="py-2">
-        <Text className="text-blue-600">
+        <Text className="text-blue-600 font-semibold">
           I need a new code
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onStartOverPress} disabled={isLoading} className="py-2">
+        <Text className="text-gray-600 font-medium">
+          Use a different email
         </Text>
       </TouchableOpacity>
     </View>
