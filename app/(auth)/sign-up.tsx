@@ -1,7 +1,17 @@
 import { useAuth, useSignUp } from '@clerk/expo'
 import { Link, useRouter } from 'expo-router'
 import React, { useState } from 'react'
-import { ActivityIndicator, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
 type SignUpFieldErrors = {
   emailAddress?: string
@@ -190,155 +200,171 @@ export default function SignUP() {
   }
 
   if (isVerifyingEmail) return (
-    <View className="flex-1 justify-center px-6 py-12">
-      <Image
-        source={require('../../assets/images/realstate.png')}
-        className="w-32 h-24 mb-8"
-        resizeMode="contain"
-      />
-      <Text className="text-3xl font-bold text-gray-800 mb-2">
-        Verify Your Email
-      </Text>
-      <Text className="text-gray-500 mb-8">
-        We sent a code to {signUp.emailAddress}. Enter it below to complete your sign up.
-      </Text>
-      <TextInput
-        className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4"
-        placeholder="Verification Code"
-        placeholderTextColor="#9ca3af"
-        keyboardType="number-pad"
-        autoCapitalize="none"
-        value={code}
-        onChangeText={(value) => {
-          setCode(value)
-          clearFieldError('code')
-        }}
-      />
-      {
-        fieldErrors.code && (
-          <Text className="text-red-500 text-sm mb-4">
-            {fieldErrors.code}
-          </Text>
-        )
-      }
-      <TouchableOpacity onPress={onVerifyEmailPress} disabled={isLoading} className="w-full bg-blue-600 rounded-xl items-center py-4 mb-4">
-        {
-          isLoading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text className="text-white font-bold text-base">
-              Verify Email
-            </Text>
-          )
-        }
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={onResendCodePress} disabled={isLoading} className="py-2">
-        <Text className="text-blue-600 font-semibold">
-          I need a new code
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={onStartOverPress} disabled={isLoading} className="py-2">
-        <Text className="text-gray-600 font-medium">
-          Use a different email
-        </Text>
-      </TouchableOpacity>
-    </View>
-  )
-
-  return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      className="bg-white"
-      keyboardShouldPersistTaps="handled"
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      className="flex-1 bg-white"
     >
-      <View className="flex-1 justify-center px-6 py-12">
-        <Image
-          source={require('../../assets/images/realstate.png')}
-          className="w-32 h-24 mb-8"
-          resizeMode="contain"
-        />
-        <Text className="text-3xl font-bold text-gray-800 mb-2">
-          Create an Account
-        </Text>
-        <Text className="text-gray-500 mb-8">
-          Find your dream home with our easy-to-use platform.
-        </Text>
-        <View className="flex-row gap-3 mb-4">
-          <TextInput
-            className="flex-1 border border-gray-300 rounded-xl px-4 py-3"
-            placeholder="First Name"
-            placeholderTextColor="#9ca3af"
-            autoCapitalize="words"
-            value={firstName}
-            onChangeText={setFirstName}
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        className="bg-white"
+        keyboardShouldPersistTaps="handled"
+      >
+        <View className="flex-1 justify-center px-6 py-12">
+          <Image
+            source={require('../../assets/images/realstate.png')}
+            className="w-32 h-24 mb-8"
+            resizeMode="contain"
           />
+          <Text className="text-3xl font-bold text-gray-800 mb-2">
+            Verify Your Email
+          </Text>
+          <Text className="text-gray-500 mb-8">
+            We sent a code to {signUp.emailAddress}. Enter it below to complete your sign up.
+          </Text>
           <TextInput
-            className="flex-1 border border-gray-300 rounded-xl px-4 py-3"
-            placeholder="Last Name"
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4"
+            placeholder="Verification Code"
             placeholderTextColor="#9ca3af"
-            autoCapitalize="words"
-            value={lastName}
-            onChangeText={setLastName}
+            keyboardType="number-pad"
+            autoCapitalize="none"
+            value={code}
+            onChangeText={(value) => {
+              setCode(value)
+              clearFieldError('code')
+            }}
           />
-        </View>
-        <TextInput
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4"
-          placeholder="Email"
-          placeholderTextColor="#9ca3af"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={(value) => {
-            setEmail(value)
-            clearFieldError('emailAddress')
-          }}
-        />
-        {fieldErrors.emailAddress && (
-          <Text className="text-red-500 text-sm mb-4">
-            {fieldErrors.emailAddress}
-          </Text>
-        )}
-        <TextInput
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-6"
-          placeholder="Password"
-          placeholderTextColor="#9ca3af"
-          secureTextEntry
-          value={password}
-          onChangeText={(value) => {
-            setPassword(value)
-            clearFieldError('password')
-          }}
-        />
-        {fieldErrors.password && (
-          <Text className="text-red-500 text-sm mb-4">
-            {fieldErrors.password}
-          </Text>
-        )}
-        <TouchableOpacity onPress={onSignUpPress} disabled={isLoading} className="w-full bg-blue-600 rounded-xl items-center py-4 mb-4">
           {
-            isLoading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text className="text-white font-bold text-base">
-                Sign Up
+            fieldErrors.code && (
+              <Text className="text-red-500 text-sm mb-4">
+                {fieldErrors.code}
               </Text>
             )
           }
-        </TouchableOpacity>
-        {fieldErrors.form && (
-          <Text className="text-red-500 text-sm mb-4">
-            {fieldErrors.form}
-          </Text>
-        )}
-        <View className="flex-row justify-center" >
-          <Text className="text-gray-500">Already have an account?</Text>
-          <Link href="/sign-in" className="text-blue-600 font-semibold ml-1">
-            Sign In
-          </Link>
+          <TouchableOpacity onPress={onVerifyEmailPress} disabled={isLoading} className="w-full bg-blue-600 rounded-xl items-center py-4 mb-4">
+            {
+              isLoading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text className="text-white font-bold text-base">
+                  Verify Email
+                </Text>
+              )
+            }
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={onResendCodePress} disabled={isLoading} className="py-2">
+            <Text className="text-blue-600 font-semibold">
+              I need a new code
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onStartOverPress} disabled={isLoading} className="py-2">
+            <Text className="text-gray-600 font-medium">
+              Use a different email
+            </Text>
+          </TouchableOpacity>
         </View>
-        <View nativeID="clerk-captcha" />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  )
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      className="flex-1 bg-white"
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        className="bg-white"
+        keyboardShouldPersistTaps="handled"
+      >
+        <View className="flex-1 justify-center px-6 py-12">
+          <Image
+            source={require('../../assets/images/realstate.png')}
+            className="w-32 h-24 mb-8"
+            resizeMode="contain"
+          />
+          <Text className="text-3xl font-bold text-gray-800 mb-2">
+            Create an Account
+          </Text>
+          <Text className="text-gray-500 mb-8">
+            Find your dream home with our easy-to-use platform.
+          </Text>
+          <View className="flex-row gap-3 mb-4">
+            <TextInput
+              className="flex-1 border border-gray-300 rounded-xl px-4 py-3"
+              placeholder="First Name"
+              placeholderTextColor="#9ca3af"
+              autoCapitalize="words"
+              value={firstName}
+              onChangeText={setFirstName}
+            />
+            <TextInput
+              className="flex-1 border border-gray-300 rounded-xl px-4 py-3"
+              placeholder="Last Name"
+              placeholderTextColor="#9ca3af"
+              autoCapitalize="words"
+              value={lastName}
+              onChangeText={setLastName}
+            />
+          </View>
+          <TextInput
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-4"
+            placeholder="Email"
+            placeholderTextColor="#9ca3af"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={(value) => {
+              setEmail(value)
+              clearFieldError('emailAddress')
+            }}
+          />
+          {fieldErrors.emailAddress && (
+            <Text className="text-red-500 text-sm mb-4">
+              {fieldErrors.emailAddress}
+            </Text>
+          )}
+          <TextInput
+            className="w-full border border-gray-300 rounded-xl px-4 py-3 mb-6"
+            placeholder="Password"
+            placeholderTextColor="#9ca3af"
+            secureTextEntry
+            value={password}
+            onChangeText={(value) => {
+              setPassword(value)
+              clearFieldError('password')
+            }}
+          />
+          {fieldErrors.password && (
+            <Text className="text-red-500 text-sm mb-4">
+              {fieldErrors.password}
+            </Text>
+          )}
+          <TouchableOpacity onPress={onSignUpPress} disabled={isLoading} className="w-full bg-blue-600 rounded-xl items-center py-4 mb-4">
+            {
+              isLoading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text className="text-white font-bold text-base">
+                  Sign Up
+                </Text>
+              )
+            }
+          </TouchableOpacity>
+          {fieldErrors.form && (
+            <Text className="text-red-500 text-sm mb-4">
+              {fieldErrors.form}
+            </Text>
+          )}
+          <View className="flex-row justify-center" >
+            <Text className="text-gray-500">Already have an account?</Text>
+            <Link href="/sign-in" className="text-blue-600 font-semibold ml-1">
+              Sign In
+            </Link>
+          </View>
+          <View nativeID="clerk-captcha" />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
