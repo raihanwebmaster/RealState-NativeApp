@@ -1,5 +1,13 @@
-import { Stack } from "expo-router";
+import { Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import "../global.css";
 
 export default function RootLayout() {
-  return <Stack />;
+  return (
+    <SafeAreaView className="bg-black" >
+      <View>
+        <Text>Root Layout</Text>
+      </View>
+    </SafeAreaView>
+  )
 }
