@@ -5,14 +5,13 @@ import React, { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
   Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 type SignUpFieldErrors = {
   emailAddress?: string
@@ -232,13 +231,11 @@ export default function SignUP() {
   }
 
   if (isVerifyingEmail) return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-white"
-    >
-      <ScrollView
+    <SafeAreaView className="flex-1 bg-white" edges={['top', 'bottom']}>
+      <KeyboardAwareScrollView
+        bottomOffset={12}
+        style={{ flex: 1, backgroundColor: '#fff' }}
         contentContainerStyle={{ flexGrow: 1 }}
-        className="bg-white"
         keyboardShouldPersistTaps="handled"
       >
         <View className="flex-1 justify-center px-6 py-12">
@@ -295,18 +292,16 @@ export default function SignUP() {
             </Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   )
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-white"
-    >
-      <ScrollView
+    <SafeAreaView className="flex-1 bg-white" edges={['top', 'bottom']}>
+      <KeyboardAwareScrollView
+        bottomOffset={12}
+        style={{ flex: 1, backgroundColor: '#fff' }}
         contentContainerStyle={{ flexGrow: 1 }}
-        className="bg-white"
         keyboardShouldPersistTaps="handled"
       >
         <View className="flex-1 justify-center px-6 py-12">
@@ -396,7 +391,7 @@ export default function SignUP() {
           </View>
           <View nativeID="clerk-captcha" />
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   )
 }
