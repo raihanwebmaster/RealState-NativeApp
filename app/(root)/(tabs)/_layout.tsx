@@ -21,7 +21,7 @@ function IOSTabs() {
         isAdmin && (
           <NativeTabs.Trigger name="create">
             <Icon sf="plus.circle.fill" />
-            <Label>Add Property</Label>
+            <Label>Add</Label>
           </NativeTabs.Trigger>
         )
       }
@@ -60,8 +60,8 @@ function AndroidTabs() {
           <Tabs.Screen
             name="create"
             options={{
-              tabBarIcon: ({ color, size }) => <Ionicons name="add" size={size} color={color} />,
-              tabBarLabel: 'Add Property'
+              tabBarIcon: ({ color, size }) => <Ionicons name="add-circle" size={size} color={color} />,
+              tabBarLabel: 'Add'
             }} />
         )
       }
