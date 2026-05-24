@@ -1,6 +1,7 @@
 import { useAuth, useSignUp } from '@clerk/expo'
+import * as SecureStore from 'expo-secure-store'
 import { Link, useRouter } from 'expo-router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
   Image,
@@ -42,6 +43,8 @@ const clerkFieldMap: Record<string, keyof SignUpFieldErrors> = {
   code: 'code',
   verification_code: 'code',
 }
+
+const SIGN_UP_START_OVER_KEY = 'realstate_sign_up_start_over'
 
 function getClerkMessage(error: ClerkErrorItem) {
   return error.longMessage || error.message || 'Something went wrong. Please try again.'
@@ -87,13 +90,29 @@ export default function SignUP() {
   const [password, setPassword] = useState('')
   const [fieldErrors, setFieldErrors] = useState<SignUpFieldErrors>({})
   const [code, setCode] = useState('')
+  const [hasStartedOver, setHasStartedOver] = useState<boolean | null>(null)
 
   const isLoading = fetchStatus === 'fetching'
   const isVerifyingEmail =
+    hasStartedOver === false &&
     signUp.status === 'missing_requirements' &&
     signUp.unverifiedFields.includes('email_address')
 
-  if (signUp.status === 'complete' || isSignedIn) {
+  useEffect(() => {
+    let isMounted = true
+
+    SecureStore.getItemAsync(SIGN_UP_START_OVER_KEY).then((value) => {
+      if (isMounted) {
+        setHasStartedOver(value === 'true')
+      }
+    })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  if (hasStartedOver === null || signUp.status === 'complete' || isSignedIn) {
     return null
   }
 
@@ -112,6 +131,17 @@ export default function SignUP() {
   }
 
   const onSignUpPress = async () => {
+    if (hasStartedOver) {
+      const { error: resetError } = await signUp.reset()
+
+      if (resetError) {
+        setFieldErrors(mapClerkErrors(resetError))
+        return
+      }
+    }
+
+    await SecureStore.deleteItemAsync(SIGN_UP_START_OVER_KEY)
+    setHasStartedOver(false)
 
     const { error } = await signUp.password({
       emailAddress: email.trim(),
@@ -197,6 +227,8 @@ export default function SignUP() {
     setPassword('')
     setCode('')
     setFieldErrors({})
+    setHasStartedOver(true)
+    await SecureStore.setItemAsync(SIGN_UP_START_OVER_KEY, 'true')
   }
 
   if (isVerifyingEmail) return (
