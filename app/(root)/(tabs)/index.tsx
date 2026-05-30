@@ -1,52 +1,95 @@
+import FeaturedCard from "@/components/FeaturedCard";
+import PropertyCard from "@/components/PropertyCard";
+import { supabase } from "@/lib/supabase";
+import { Property } from "@/types";
+import { useUser } from "@clerk/expo";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import FeaturedCard from '@/components/FeaturedCard'
-import PropertyCard from '@/components/PropertyCard'
-import { supabase } from '@/lib/supabase'
-import { Property } from '@/types'
-import { useUser } from '@clerk/expo'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import { useFocusEffect, useRouter } from 'expo-router'
-import React, { useCallback, useState } from 'react'
-import { ActivityIndicator, FlatList, Image, Text, TouchableOpacity, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+const WAVE_EMOJI = "\u{1F44B}";
+
+const getGreeting = (): string => {
+  const hour = new Date().getHours();
+
+  if (hour < 5) {
+    return "Good night";
+  }
+
+  if (hour < 12) {
+    return "Good morning";
+  }
+
+  if (hour < 17) {
+    return "Good afternoon";
+  }
+
+  if (hour < 21) {
+    return "Good evening";
+  }
+
+  return "Good night";
+};
 
 export default function HomeScreen() {
-  const { user } = useUser()
-  const router = useRouter()
-  const [featured, setFeatured] = useState<Property[]>([])
-  const [recommended, setRecommended] = useState<Property[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
+  const { user } = useUser();
+  const router = useRouter();
+  const greeting = getGreeting();
+  const [featured, setFeatured] = useState<Property[]>([]);
+  const [recommended, setRecommended] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const fetchProperties = async () => {
-    setLoading(true)
-    const { data: featuredData, error } = await supabase
-      .from('properties')
-      .select("*")
-      .eq('is_featured', true)
-      .order('created_at', { ascending: false })
-    if (error) {
-      console.error('Error fetching featured properties:', error)
-    } else {
-      setFeatured(featuredData)
+  const fetchProperties = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const [featuredResult, recommendedResult] = await Promise.all([
+        supabase
+          .from("properties")
+          .select("*")
+          .eq("is_featured", true)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("properties")
+          .select("*")
+          .eq("is_featured", false)
+          .order("created_at", { ascending: false }),
+      ]);
+
+      if (featuredResult.error) {
+        console.error("Error fetching featured properties:", featuredResult.error);
+      } else {
+        setFeatured((featuredResult.data ?? []) as Property[]);
+      }
+
+      if (recommendedResult.error) {
+        console.error(
+          "Error fetching recommended properties:",
+          recommendedResult.error,
+        );
+      } else {
+        setRecommended((recommendedResult.data ?? []) as Property[]);
+      }
+    } finally {
+      setLoading(false);
     }
-    const { data: recommendedData, error: recommendedError } = await supabase
-      .from('properties')
-      .select("*")
-      .eq('is_featured', false)
-      .order('created_at', { ascending: false })
-    if (recommendedError) {
-      console.error('Error fetching recommended properties:', recommendedError)
-    } else {
-      setRecommended(recommendedData)
-    }
-    setLoading(false)
-  }
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
-      fetchProperties()
-    }, [])
-  )
+      void fetchProperties();
+    }, [fetchProperties]),
+  );
+
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       <FlatList
@@ -56,7 +99,6 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <View>
-            {/* Header */}
             <View className="flex-row items-center justify-between px-5 pt-4 pb-5">
               <Image
                 source={require("../../../assets/images/realstate.png")}
@@ -64,14 +106,15 @@ export default function HomeScreen() {
                 resizeMode="contain"
               />
               <View className="items-end">
-                <Text className="text-gray-500 text-xs">Good morning 👋</Text>
+                <Text className="text-gray-500 text-xs">
+                  {greeting} {WAVE_EMOJI}
+                </Text>
                 <Text className="text-gray-900 text-base font-bold">
                   {user?.firstName ?? "User"}
                 </Text>
               </View>
             </View>
 
-            {/* Search Bar */}
             <TouchableOpacity
               onPress={() => router.push("/(root)/(tabs)/search")}
               className="mx-5 mb-6 flex-row items-center bg-white rounded-2xl px-4 py-3 gap-3"
@@ -97,7 +140,6 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </TouchableOpacity>
 
-            {/* Featured Section */}
             <View className="mb-6">
               <Text className="text-gray-900 text-lg font-bold px-5 mb-4">
                 Featured
@@ -121,7 +163,6 @@ export default function HomeScreen() {
               )}
             </View>
 
-            {/* Recommended Header */}
             <Text className="text-gray-900 text-lg font-bold px-5 mb-4">
               Recommended
             </Text>
@@ -141,5 +182,5 @@ export default function HomeScreen() {
         }
       />
     </SafeAreaView>
-  )
+  );
 }

@@ -6,10 +6,16 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 
 export default function FeaturedCard({ property }: { property: Property }) {
     const router = useRouter();
+    const imageUri = property.images?.[0];
 
     return (
         <TouchableOpacity
-            onPress={() => router.push(`/(root)/property/${property.id}`)}
+            onPress={() =>
+                router.push({
+                    pathname: "/(root)/property/[id]",
+                    params: { id: property.id },
+                })
+            }
             className="w-72 mr-4 rounded-3xl overflow-hidden bg-white"
             style={{
                 shadowColor: "#000",
@@ -22,7 +28,11 @@ export default function FeaturedCard({ property }: { property: Property }) {
         >
             {/* Image */}
             <Image
-                source={{ uri: property.images[0] }}
+                source={
+                    imageUri
+                        ? { uri: imageUri }
+                        : require("../assets/images/realstate.png")
+                }
                 className="w-full h-44"
                 resizeMode="cover"
             />

@@ -27,3 +27,6 @@ export const formatPrice = (value: number | string): string => {
     maximumFractionDigits: 0,
   })}`;
 };
+
+export const formatAreaSqft = (value: number | string): string =>
+  `${value} ft\u00B2`;
