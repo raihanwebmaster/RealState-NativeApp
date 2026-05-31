@@ -1,35 +1,46 @@
 import { useUserStore } from "@/store/userStore";
-import { useUser } from "@clerk/expo";
+import { useAuth, useUser } from "@clerk/expo";
 import { useEffect } from "react";
 import { useSupabase } from "./useSuperbase";
 
 export const useUserSync = () => {
-  const { isLoaded, user } = useUser();
-  const authSupabase = useSupabase();
+  const { isLoaded: authLoaded, userId } = useAuth();
+  const { isLoaded: userLoaded, user } = useUser();
   const setIsAdmin = useUserStore((state) => state.setIsAdmin);
   const setIsAdminLoading = useUserStore((state) => state.setIsAdminLoading);
+  const authSupabase = useSupabase();
 
+  const email = user?.primaryEmailAddress?.emailAddress ?? "";
+  const firstName = user?.firstName ?? null;
+  const lastName = user?.lastName ?? null;
+  const avatarUrl = user?.imageUrl ?? null;
+  
   useEffect(() => {
     let isActive = true;
 
     const syncUser = async () => {
-      if (!isLoaded) {
+      if (!authLoaded) {
+        return;
+      }
+
+      if (!userId) {
+        setIsAdmin(false);
+        setIsAdminLoading(false);
+        return;
+      }
+
+      if (!userLoaded) {
         return;
       }
 
       setIsAdminLoading(true);
       setIsAdmin(false);
 
-      if (!user) {
-        setIsAdminLoading(false);
-        return;
-      }
-
       try {
         const { data, error } = await authSupabase
           .from("users")
           .select("clerk_id, is_admin")
-          .eq("clerk_id", user.id)
+          .eq("clerk_id", userId)
           .maybeSingle();
 
         if (!isActive) {
@@ -50,11 +61,11 @@ export const useUserSync = () => {
         const { data: newUser, error: createError } = await authSupabase
           .from("users")
           .insert({
-            clerk_id: user.id,
-            email: user.emailAddresses[0]?.emailAddress ?? "",
-            first_name: user.firstName,
-            last_name: user.lastName,
-            avatar_url: user.imageUrl,
+            clerk_id: userId,
+            email,
+            first_name: firstName,
+            last_name: lastName,
+            avatar_url: avatarUrl,
           })
           .select("is_admin")
           .single();
@@ -82,5 +93,5 @@ export const useUserSync = () => {
     return () => {
       isActive = false;
     };
-  }, [authSupabase, isLoaded, setIsAdmin, setIsAdminLoading, user]);
+  }, [authLoaded,userId,userLoaded]);
 };
