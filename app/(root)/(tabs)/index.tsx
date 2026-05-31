@@ -102,7 +102,7 @@ export default function HomeScreen() {
             <View className="flex-row items-center justify-between px-5 pt-4 pb-5">
               <Image
                 source={require("../../../assets/images/realstate.png")}
-                style={{ width: 90, height: 36 }}
+                style={{ width: 90, height:56 }}
                 resizeMode="contain"
               />
               <View className="items-end">

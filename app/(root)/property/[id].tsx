@@ -90,8 +90,8 @@ export default function PropertyDetailsScreen() {
                 ? { uri: imageUri }
                 : require("../../../assets/images/realstate.png")
             }
-            className="w-full h-80"
-            resizeMode="cover"
+            className="w-full h-80 bg-gray-100"
+            resizeMode={imageUri ? "cover" : "contain"}
           />
           <TouchableOpacity
             onPress={() => router.back()}

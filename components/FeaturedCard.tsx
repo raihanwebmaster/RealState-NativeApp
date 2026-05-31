@@ -33,8 +33,8 @@ export default function FeaturedCard({ property }: { property: Property }) {
                         ? { uri: imageUri }
                         : require("../assets/images/realstate.png")
                 }
-                className="w-full h-44"
-                resizeMode="cover"
+                className="w-full h-44 bg-gray-100"
+                resizeMode={"cover"}
             />
 
             {/* Badge */}

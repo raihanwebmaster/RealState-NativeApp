@@ -1,11 +1,10 @@
-import { useUserStore } from '@/store/userStore';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { Tabs } from 'expo-router';
-import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
-import { Platform } from 'react-native';
+import { useUserStore } from "@/store/userStore";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Tabs } from "expo-router";
+import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
+import { ActivityIndicator, Platform, View } from "react-native";
 
-function IOSTabs() {
-  const isAdmin = useUserStore((state) => state.isAdmin);
+function IOSTabs({ isAdmin }: { isAdmin: boolean }) {
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
@@ -17,14 +16,12 @@ function IOSTabs() {
         <Label>Search</Label>
       </NativeTabs.Trigger>
 
-      {
-        isAdmin && (
-          <NativeTabs.Trigger name="create">
-            <Icon sf="plus.circle.fill" />
-            <Label>Add</Label>
-          </NativeTabs.Trigger>
-        )
-      }
+      {isAdmin && (
+        <NativeTabs.Trigger name="create">
+          <Icon sf="plus.circle.fill" />
+          <Label>Add</Label>
+        </NativeTabs.Trigger>
+      )}
 
       <NativeTabs.Trigger name="saved">
         <Icon sf="heart.fill" />
@@ -39,49 +36,75 @@ function IOSTabs() {
   );
 }
 
-function AndroidTabs() {
-  const isAdmin = useUserStore((state) => state.isAdmin);
+function AndroidTabs({ isAdmin }: { isAdmin: boolean }) {
   return (
-    <Tabs screenOptions={{ headerShown: false, }}>
+    <Tabs screenOptions={{ headerShown: false }}>
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
-          tabBarLabel: 'Home'
-        }} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home" size={size} color={color} />
+          ),
+          tabBarLabel: "Home",
+        }}
+      />
       <Tabs.Screen
         name="search"
         options={{
-          tabBarIcon: ({ color, size }) => <Ionicons name="search" size={size} color={color} />,
-          tabBarLabel: 'Search'
-        }} />
-      {
-        isAdmin && (
-          <Tabs.Screen
-            name="create"
-            options={{
-              tabBarIcon: ({ color, size }) => <Ionicons name="add-circle" size={size} color={color} />,
-              tabBarLabel: 'Add'
-            }} />
-        )
-      }
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="search" size={size} color={color} />
+          ),
+          tabBarLabel: "Search",
+        }}
+      />
+      {isAdmin && (
+        <Tabs.Screen
+          name="create"
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="add-circle" size={size} color={color} />
+            ),
+            tabBarLabel: "Add",
+          }}
+        />
+      )}
       <Tabs.Screen
         name="saved"
         options={{
-          tabBarIcon: ({ color, size }) => <Ionicons name="heart" size={size} color={color} />,
-          tabBarLabel: 'Saved'
-        }} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="heart" size={size} color={color} />
+          ),
+          tabBarLabel: "Saved",
+        }}
+      />
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
-          tabBarLabel: 'Profile'
-        }} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person" size={size} color={color} />
+          ),
+          tabBarLabel: "Profile",
+        }}
+      />
     </Tabs>
   );
 }
 
-
 export default function TabLayout() {
-  return Platform.OS === 'ios' ? <IOSTabs /> : <AndroidTabs />;
+  const isAdmin = useUserStore((state) => state.isAdmin);
+  const isAdminLoading = useUserStore((state) => state.isAdminLoading);
+
+  if (isAdminLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="small" color="#2563EB" />
+      </View>
+    );
+  }
+
+  return Platform.OS === "ios" ? (
+    <IOSTabs isAdmin={isAdmin} />
+  ) : (
+    <AndroidTabs isAdmin={isAdmin} />
+  );
 }

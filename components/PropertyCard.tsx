@@ -28,10 +28,10 @@ export default function PropertyCard({ property }: { property: Property }) {
     >
       <Image
         source={
-          imageUri ? { uri: imageUri } : require("../assets/images/realstate.png")
+          imageUri ? { uri: imageUri } : require("../assets/images/icon.png")
         }
-        className="w-28 h-28"
-        resizeMode="cover"
+        className="w-28 h-28 bg-gray-100"
+        resizeMode={"cover"}
       />
 
       <View className="flex-1 p-3 justify-between">
