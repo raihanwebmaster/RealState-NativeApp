@@ -1,166 +1,220 @@
-import { formatAreaSqft, formatPrice } from "@/lib/utils";
-import { supabase } from "@/lib/supabase";
-import { Property } from "@/types";
-import { Ionicons } from "@expo/vector-icons";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSavedProperty } from '@/hooks/useSavedProperty'
+import { useSupabase } from '@/hooks/useSuperbase'
+import { formatPrice } from '@/lib/utils'
+import { useUserStore } from '@/store/userStore'
+import { Property } from '@/types'
+import { useAuth } from '@clerk/expo'
+import { Ionicons } from '@expo/vector-icons'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import React, { useEffect, useState } from 'react'
+import { Dimensions, FlatList, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+const { width } = Dimensions.get("window");
 
-export default function PropertyDetailsScreen() {
-  const router = useRouter();
-  const { id } = useLocalSearchParams<{ id?: string }>();
-  const [property, setProperty] = useState<Property | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function PropertyDetails() {
+  const { id } = useLocalSearchParams<{ id: string }>()
+  const { userId } = useAuth()
+  const router = useRouter()
+  const isAdmin = useUserStore((state) => state.isAdmin)
+
+  const [property, setProperty] = useState<Property | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [expanded, setExpanded] = useState(false)
+  const [imageViewerVisible, setImageViewerVisible] = useState(false)
+
+  const authSupabase = useSupabase();
+  const fetchProperty = async () => {
+    const { data, error } = await authSupabase
+      .from('properties')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error) {
+      console.error('Error fetching property:', error)
+    } else {
+      setProperty(data)
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    let isMounted = true;
+    fetchProperty()
+  }, [id])
 
-    const fetchProperty = async () => {
-      if (!id) {
-        setLoading(false);
-        return;
-      }
 
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("properties")
-        .select("*")
-        .eq("id", id)
-        .maybeSingle();
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const index = Math.round(e.nativeEvent.contentOffset.x / width);
+    setActiveIndex(index);
+  };
 
-      if (!isMounted) {
-        return;
-      }
-
-      if (error) {
-        console.error("Error fetching property:", error);
-        setProperty(null);
-      } else {
-        setProperty((data as Property | null) ?? null);
-      }
-
-      setLoading(false);
-    };
-
-    void fetchProperty();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [id]);
-
-  if (loading) {
-    return (
-      <SafeAreaView className="flex-1 bg-white items-center justify-center">
-        <ActivityIndicator size="large" color="#2563EB" />
-      </SafeAreaView>
-    );
-  }
+  const { isSaved, saveLoading, toggleSave } = useSavedProperty(id ?? "");
 
   if (!property) {
     return (
-      <SafeAreaView className="flex-1 bg-white items-center justify-center px-6">
-        <Text className="text-gray-900 text-lg font-bold mb-2">
-          Property not found
-        </Text>
-        <TouchableOpacity onPress={() => router.back()} className="mt-4">
-          <Text className="text-blue-600 font-semibold">Go back</Text>
-        </TouchableOpacity>
+      <SafeAreaView className="flex-1 bg-gray-50">
+        <View className="flex-1 items-center justify-center bg-white">
+          <Text className="text-gray-500">Property not found</Text>
+        </View>
       </SafeAreaView>
-    );
+
+    )
   }
 
-  const imageUri = property.images?.[0];
+  const images = property.images ?? []
+  const isLongDesc = (property.description?.length ?? 0) > 150;
+  const displayDesc =
+    expanded || !isLongDesc
+      ? property.description
+      : property.description?.slice(0, 150) + "...";
+
+
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <View className="flex-1 bg-white">
+      <ScrollView showsVerticalScrollIndicator={false} >
         <View>
-          <Image
-            source={
-              imageUri
-                ? { uri: imageUri }
-                : require("../../../assets/images/realstate.png")
-            }
-            className="w-full h-80 bg-gray-100"
-            resizeMode={imageUri ? "cover" : "contain"}
-          />
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="absolute top-4 left-4 w-10 h-10 rounded-full bg-white/90 items-center justify-center"
-          >
-            <Ionicons name="chevron-back" size={22} color="#111827" />
-          </TouchableOpacity>
-          {property.is_sold && (
-            <View className="absolute top-4 right-4 bg-red-500 px-3 py-1 rounded-full">
-              <Text className="text-xs font-semibold text-white">Sold</Text>
-            </View>
-          )}
-        </View>
-
-        <View className="px-5 py-5">
-          <View className="flex-row items-start justify-between gap-4 mb-3">
-            <View className="flex-1">
-              <Text className="text-2xl font-bold text-gray-900">
-                {property.title}
-              </Text>
-              <View className="flex-row items-center gap-1 mt-2">
-                <Ionicons name="location-outline" size={15} color="#6B7280" />
-                <Text className="text-sm text-gray-500 flex-1">
-                  {property.address}, {property.city}
-                </Text>
-              </View>
-            </View>
-            <Text className="text-blue-600 text-xl font-bold">
-              {formatPrice(property.price)}
+          <View style={{ opacity: property.is_sold ? 0.5 : 1 }}>
+            <FlatList
+              data={images}
+              keyExtractor={(_, i) => i.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => setImageViewerVisible(true)}>
+                  <Image
+                    source={{ uri: item }}
+                    style={{ width, height: 300 }}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              )}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onScroll={onScroll}
+              scrollEventThrottle={16}
+            />
+          </View>
+          <View className="absolute bottom-3 right-4 bg-black/50 px-3 py-1 rounded-full">
+            <Text className="text-white text-xs font-medium">
+              {images.length ? `${activeIndex + 1}/${images.length}` : '0/0'}
             </Text>
           </View>
-
-          <View className="flex-row gap-3 py-4 border-y border-gray-100">
-            <View className="flex-1">
-              <Text className="text-xs text-gray-500">Type</Text>
-              <Text className="text-sm font-semibold text-gray-900 capitalize">
+          <SafeAreaView className="absolute top-0 left-0 right-0">
+            <View className="flex-row items-center justify-between px-4 pt-2">
+              <TouchableOpacity
+                onPress={() => router.back()}
+                className="w-10 h-10 bg-white rounded-full items-center justify-center"
+                style={{ elevation: 3 }}
+              >
+                <Ionicons name="arrow-back" size={20} color="#111827" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={toggleSave}
+                disabled={saveLoading}
+                className="w-10 h-10 bg-white rounded-full items-center justify-center"
+                style={{ elevation: 3 }}
+              >
+                <Ionicons
+                  name={isSaved ? "heart" : "heart-outline"}
+                  size={20}
+                  color={isSaved ? "#EF4444" : "#111827"}
+                />
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </View>
+        <View
+          className="px-5 pt-5 pb-8"
+          style={{ opacity: property.is_sold ? 0.6 : 1 }}
+        >
+          {/* Badges */}
+          <View className="flex-row gap-2 mb-3 flex-wrap">
+            <View className="bg-blue-50 px-3 py-1 rounded-full">
+              <Text className="text-blue-600 text-xs font-semibold capitalize">
                 {property.type}
               </Text>
             </View>
-            <View className="flex-1">
-              <Text className="text-xs text-gray-500">Beds</Text>
-              <Text className="text-sm font-semibold text-gray-900">
-                {property.bedrooms}
-              </Text>
-            </View>
-            <View className="flex-1">
-              <Text className="text-xs text-gray-500">Baths</Text>
-              <Text className="text-sm font-semibold text-gray-900">
-                {property.bathrooms}
-              </Text>
-            </View>
-            <View className="flex-1">
-              <Text className="text-xs text-gray-500">Area</Text>
-              <Text className="text-sm font-semibold text-gray-900">
-                {formatAreaSqft(property.area_sqft)}
-              </Text>
-            </View>
+            {property.is_featured && (
+              <View className="bg-amber-50 px-3 py-1 rounded-full">
+                <Text className="text-amber-600 text-xs font-semibold">
+                  ⭐ Featured
+                </Text>
+              </View>
+            )}
+            {property.is_sold && (
+              <View className="bg-red-50 px-3 py-1 rounded-full">
+                <Text className="text-red-500 text-xs font-semibold">Sold</Text>
+              </View>
+            )}
+          </View>
+          {/* Title + Price */}
+          <Text className="text-2xl font-bold text-gray-900 mb-1">
+            {property.title}
+          </Text>
+          <Text className="text-blue-600 text-xl font-bold mb-4">
+            {formatPrice(property.price)}
+          </Text>
+
+          {/* Specs Row */}
+          <View className="flex-row justify-between bg-gray-50 rounded-2xl p-4 mb-5">
+            <SpecItem
+              icon="bed-outline"
+              label="Beds"
+              value={`${property.bedrooms}`}
+            />
+            <SpecItem
+              icon="water-outline"
+              label="Baths"
+              value={`${property.bathrooms}`}
+            />
+            <SpecItem
+              icon="expand-outline"
+              label="Area"
+              value={`${property.area_sqft} ft²`}
+            />
+            <SpecItem icon="home-outline" label="Type" value={property.type} />
           </View>
 
-          <View className="mt-5">
-            <Text className="text-lg font-bold text-gray-900 mb-2">
-              Description
-            </Text>
-            <Text className="text-sm leading-6 text-gray-600">
-              {property.description}
-            </Text>
-          </View>
+          {/* Description */}
+          <Text className="text-base font-bold text-gray-900 mb-2">
+            Description
+          </Text>
+          <Text className="text-gray-500 text-sm leading-6 mb-1">
+            {displayDesc}
+          </Text>
+          {isLongDesc && (
+            <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+              <Text className="text-blue-600 text-sm font-medium mb-5">
+                {expanded ? "Show less" : "Read more"}
+              </Text>
+            </TouchableOpacity>
+          )}
+          <View className="mb-5" />
+
+          
+
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
+
+  )
+}
+
+function SpecItem({
+  icon,
+  label,
+  value,
+}: {
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  value: string;
+}) {
+  return (
+    <View className="items-center gap-1">
+      <Ionicons name={icon} size={20} color="#2563EB" />
+      <Text className="text-gray-900 font-bold text-sm">{value}</Text>
+      <Text className="text-gray-400 text-xs">{label}</Text>
+    </View>
   );
 }
