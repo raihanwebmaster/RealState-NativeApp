@@ -45,7 +45,7 @@ export default function PropertyCard({ property }: { property: Property }) {
           <View className="flex-row items-center gap-1">
             <Ionicons name="location-outline" size={11} color="#6B7280" />
             <Text className="text-xs text-gray-500" numberOfLines={1}>
-              {property.city}
+                {property.address}, {property.city}
             </Text>
           </View>
         </View>
