@@ -56,7 +56,7 @@ export default function SearchScreen() {
     let query = supabase.from("properties").select("*");
 
     if (search) {
-      query = query.or(`title.ilike.%${search}%,city.ilike.%${search}%`);
+      query = query.or(`title.ilike.%${search}%,city.ilike.%${search}%,address.ilike.%${search}%`);
     }
 
     if (type) {
