@@ -9,6 +9,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { Dimensions, FlatList, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { WebView } from "react-native-webview"
+
 const { width } = Dimensions.get("window");
 
 export default function PropertyDetails() {
@@ -68,6 +70,10 @@ export default function PropertyDetails() {
     expanded || !isLongDesc
       ? property.description
       : property.description?.slice(0, 150) + "...";
+
+  const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${property.longitude - 0.003
+    }%2C${property.latitude - 0.003}%2C${property.longitude + 0.003}%2C${property.latitude + 0.003
+    }&layer=mapnik&marker=${property.latitude}%2C${property.longitude}`;
 
 
 
@@ -190,9 +196,50 @@ export default function PropertyDetails() {
               </Text>
             </TouchableOpacity>
           )}
-          <View className="mb-5" />
+          {/* <View className="mb-5" /> */}
 
-          
+          {/* Location */}
+          <Text className="text-base font-bold text-gray-900 mb-2">
+            Location
+          </Text>
+          <View className="flex-row items-center gap-2 mb-4">
+            <Ionicons name="location-outline" size={16} color="#6B7280" />
+            <Text className="text-gray-500 text-sm flex-1">
+              {property.address}, {property.city}
+            </Text>
+          </View>
+
+          {/* Map Preview */}
+          <TouchableOpacity
+            onPress={() =>
+              router.push({
+                pathname: "/(root)/property/map",
+                params: {
+                  latitude: property.latitude,
+                  longitude: property.longitude,
+                  title: property.title,
+                  address: `${property.address}, ${property.city}`,
+                },
+              })
+            }
+            activeOpacity={0.9}
+            className="rounded-2xl overflow-hidden mb-6"
+            style={{ height: 200 }}
+          >
+            <WebView
+              source={{ uri: mapUrl }}
+              style={{ flex: 1 }}
+              scrollEnabled={false}
+              pointerEvents="none"
+            />
+            <View className="absolute bottom-3 right-3 bg-white/90 px-3 py-1 rounded-full flex-row items-center gap-1">
+              <Ionicons name="expand-outline" size={12} color="#374151" />
+              <Text className="text-gray-600 text-xs font-medium">
+                Tap to expand
+              </Text>
+            </View>
+          </TouchableOpacity>
+
 
         </View>
       </ScrollView>
