@@ -1,12 +1,18 @@
+import { useSavedProperty } from "@/hooks/useSavedProperty";
 import { formatAreaSqft, formatPrice } from "@/lib/utils";
 import { Property } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
-export default function PropertyCard({ property }: { property: Property }) {
+export default function PropertyCard({ property, onUnsave, showSave }: { property: Property, onUnsave?: () => void, showSave?: boolean }) {
   const router = useRouter();
   const imageUri = property.images?.[0];
+
+  const { isSaved, saveLoading, toggleSave } = useSavedProperty(
+    property.id,
+    onUnsave
+  );
 
   return (
     <TouchableOpacity
@@ -45,7 +51,7 @@ export default function PropertyCard({ property }: { property: Property }) {
           <View className="flex-row items-center gap-1">
             <Ionicons name="location-outline" size={11} color="#6B7280" />
             <Text className="text-xs text-gray-500" numberOfLines={1}>
-                {property.address}, {property.city}
+              {property.address}, {property.city}
             </Text>
           </View>
         </View>
@@ -75,6 +81,20 @@ export default function PropertyCard({ property }: { property: Property }) {
           </View>
         </View>
       </View>
+      {/* Save Button */}
+      {showSave && (
+        <TouchableOpacity
+          onPress={toggleSave}
+          disabled={saveLoading}
+          className="w-10 items-center pt-3"
+        >
+          <Ionicons
+            name={isSaved ? "heart" : "heart-outline"}
+            size={18}
+            color={isSaved ? "#EF4444" : "#9CA3AF"}
+          />
+        </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 }
