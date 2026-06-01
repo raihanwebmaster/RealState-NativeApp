@@ -5,7 +5,19 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
-export default function PropertyCard({ property, onUnsave, showSave }: { property: Property, onUnsave?: () => void, showSave?: boolean }) {
+type PropertyCardSource = "search";
+
+export default function PropertyCard({
+  property,
+  onUnsave,
+  showSave,
+  source,
+}: {
+  property: Property;
+  onUnsave?: () => void;
+  showSave?: boolean;
+  source?: PropertyCardSource;
+}) {
   const router = useRouter();
   const imageUri = property.images?.[0];
 
@@ -19,7 +31,10 @@ export default function PropertyCard({ property, onUnsave, showSave }: { propert
       onPress={() =>
         router.push({
           pathname: "/(root)/property/[id]",
-          params: { id: property.id },
+          params: {
+            id: property.id,
+            ...(source ? { from: source } : {}),
+          },
         })
       }
       className="flex-row bg-white rounded-2xl mb-4 overflow-hidden"

@@ -199,7 +199,9 @@ export default function SearchScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => <PropertyCard property={item} />}
+        renderItem={({ item }) => (
+          <PropertyCard property={item} source="search" />
+        )}
         ListHeaderComponent={
           <Text className="text-sm text-gray-400 mb-4">
             {loading ? "Searching..." : `${results.length} properties found`}

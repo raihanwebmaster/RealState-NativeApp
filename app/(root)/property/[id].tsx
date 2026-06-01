@@ -1,12 +1,10 @@
 import { useSavedProperty } from '@/hooks/useSavedProperty'
 import { useSupabase } from '@/hooks/useSuperbase'
 import { formatPrice } from '@/lib/utils'
-import { useUserStore } from '@/store/userStore'
 import { Property } from '@/types'
-import { useAuth } from '@clerk/expo'
 import { Ionicons } from '@expo/vector-icons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Dimensions, FlatList, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { WebView } from "react-native-webview"
@@ -14,19 +12,24 @@ import { WebView } from "react-native-webview"
 const { width } = Dimensions.get("window");
 
 export default function PropertyDetails() {
-  const { id } = useLocalSearchParams<{ id: string }>()
-  const { userId } = useAuth()
+  const { id, from } = useLocalSearchParams<{ id: string; from?: string }>()
   const router = useRouter()
-  const isAdmin = useUserStore((state) => state.isAdmin)
 
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeIndex, setActiveIndex] = useState(0)
   const [expanded, setExpanded] = useState(false)
-  const [imageViewerVisible, setImageViewerVisible] = useState(false)
+  const [, setImageViewerVisible] = useState(false)
 
   const authSupabase = useSupabase();
-  const fetchProperty = async () => {
+  const fetchProperty = useCallback(async () => {
+    if (!id) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
     const { data, error } = await authSupabase
       .from('properties')
       .select('*')
@@ -35,15 +38,17 @@ export default function PropertyDetails() {
 
     if (error) {
       console.error('Error fetching property:', error)
+      setProperty(null)
     } else {
       setProperty(data)
-      setLoading(false)
     }
-  }
+
+    setLoading(false)
+  }, [id])
 
   useEffect(() => {
-    fetchProperty()
-  }, [id])
+    void fetchProperty()
+  }, [fetchProperty])
 
 
   const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -52,6 +57,25 @@ export default function PropertyDetails() {
   };
 
   const { isSaved, saveLoading, toggleSave } = useSavedProperty(id ?? "");
+
+  const handleBack = () => {
+    if (from === "search") {
+      router.replace("/(root)/(tabs)/search");
+      return;
+    }
+
+    router.back();
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView className="flex-1 bg-gray-50">
+        <View className="flex-1 items-center justify-center bg-white">
+          <Text className="text-gray-500">Loading property...</Text>
+        </View>
+      </SafeAreaView>
+    )
+  }
 
   if (!property) {
     return (
@@ -109,7 +133,7 @@ export default function PropertyDetails() {
           <SafeAreaView className="absolute top-0 left-0 right-0">
             <View className="flex-row items-center justify-between px-4 pt-2">
               <TouchableOpacity
-                onPress={() => router.back()}
+                onPress={handleBack}
                 className="w-10 h-10 bg-white rounded-full items-center justify-center"
                 style={{ elevation: 3 }}
               >
