@@ -64,7 +64,10 @@ export default function SearchScreen() {
     }
 
     if (bedrooms) {
-      query = query.eq("bedrooms", bedrooms);
+      query =
+        bedrooms === 4
+          ? query.gte("bedrooms", bedrooms)
+          : query.eq("bedrooms", bedrooms);
     }
 
     if (minPrice !== null) {

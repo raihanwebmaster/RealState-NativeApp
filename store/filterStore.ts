@@ -1,5 +1,5 @@
 import { create } from "zustand";
-export type PropertyType = "apartment" | "house" | "villa" | "studio" | null;
+export type PropertyType = string | null;
 
 interface FilterState {
     search: string;
