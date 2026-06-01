@@ -1,13 +1,14 @@
+import { formatPrice } from "@/lib/utils";
 import { PropertyType, useFilterStore } from "@/store/filterStore";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    Modal,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const TYPES: { label: string; value: PropertyType }[] = [
@@ -27,15 +28,38 @@ const BEDS = [
 ];
 
 const PRICE_PRESETS = [
-  { label: "Under ₹50L", min: null, max: 5000000 },
-  { label: "₹50L – ₹1Cr", min: 5000000, max: 10000000 },
-  { label: "₹1Cr – ₹2Cr", min: 10000000, max: 20000000 },
-  { label: "Above ₹2Cr", min: 20000000, max: null },
+  { min: null, max: 5000000 },
+  { min: 5000000, max: 10000000 },
+  { min: 10000000, max: 20000000 },
+  { min: 20000000, max: null },
 ];
 
+const EURO_SYMBOL = "\u20AC";
+
+const formatPricePresetLabel = ({
+  min,
+  max,
+}: {
+  min: number | null;
+  max: number | null;
+}) => {
+  if (min !== null && max !== null) {
+    return `${formatPrice(min)} - ${formatPrice(max)}`;
+  }
+
+  if (min !== null) {
+    return `Above ${formatPrice(min)}`;
+  }
+
+  if (max !== null) {
+    return `Under ${formatPrice(max)}`;
+  }
+
+  return "Any price";
+};
+
 const chip = (active: boolean) =>
-  `px-4 py-2 rounded-full border ${
-    active ? "bg-blue-600 border-blue-600" : "bg-white border-gray-200"
+  `px-4 py-2 rounded-full border ${active ? "bg-blue-600 border-blue-600" : "bg-white border-gray-200"
   }`;
 
 const chipText = (active: boolean) =>
@@ -60,8 +84,21 @@ export default function FilterModal({
     resetFilters,
   } = useFilterStore();
 
-  const [localMin, setLocalMin] = useState(minPrice ? String(minPrice) : "");
-  const [localMax, setLocalMax] = useState(maxPrice ? String(maxPrice) : "");
+  const [localMin, setLocalMin] = useState(
+    minPrice !== null ? String(minPrice) : "",
+  );
+  const [localMax, setLocalMax] = useState(
+    maxPrice !== null ? String(maxPrice) : "",
+  );
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+
+    setLocalMin(minPrice !== null ? String(minPrice) : "");
+    setLocalMax(maxPrice !== null ? String(maxPrice) : "");
+  }, [maxPrice, minPrice, visible]);
 
   const activeCount = [type, bedrooms, minPrice, maxPrice].filter(
     (v) => v !== null
@@ -140,17 +177,15 @@ export default function FilterModal({
               <TouchableOpacity
                 key={String(item.value)}
                 onPress={() => setBedrooms(item.value)}
-                className={`flex-1 items-center py-3 rounded-2xl border ${
-                  bedrooms === item.value
+                className={`flex-1 items-center py-3 rounded-2xl border ${bedrooms === item.value
                     ? "bg-blue-600 border-blue-600"
                     : "bg-white border-gray-200"
-                }`}
+                  }`}
                 style={shadow}
               >
                 <Text
-                  className={`text-sm font-bold ${
-                    bedrooms === item.value ? "text-white" : "text-gray-600"
-                  }`}
+                  className={`text-sm font-bold ${bedrooms === item.value ? "text-white" : "text-gray-600"
+                    }`}
                 >
                   {item.label}
                 </Text>
@@ -160,7 +195,7 @@ export default function FilterModal({
 
           {/* Price Range */}
           <Text className="text-base font-bold text-gray-800 mb-3">
-            Price Range (₹)
+            Price Range ({EURO_SYMBOL})
           </Text>
           <View className="flex-row gap-3 mb-3">
             {[
@@ -185,7 +220,9 @@ export default function FilterModal({
                   className="flex-row items-center bg-white rounded-2xl px-3 border border-gray-200"
                   style={shadow}
                 >
-                  <Text className="text-gray-400 text-sm mr-1">₹</Text>
+                  <Text className="text-gray-400 text-sm mr-1">
+                    {EURO_SYMBOL}
+                  </Text>
                   <TextInput
                     className="flex-1 py-3 text-gray-800"
                     placeholder={placeholder}
@@ -205,25 +242,23 @@ export default function FilterModal({
               const active = minPrice === p.min && maxPrice === p.max;
               return (
                 <TouchableOpacity
-                  key={p.label}
+                  key={`${p.min ?? "min"}-${p.max ?? "max"}`}
                   onPress={() => {
                     setLocalMin(p.min ? String(p.min) : "");
                     setLocalMax(p.max ? String(p.max) : "");
                     setMinPrice(p.min);
                     setMaxPrice(p.max);
                   }}
-                  className={`px-3 py-1.5 rounded-full border ${
-                    active
+                  className={`px-3 py-1.5 rounded-full border ${active
                       ? "bg-blue-50 border-blue-300"
                       : "bg-white border-gray-200"
-                  }`}
+                    }`}
                 >
                   <Text
-                    className={`text-xs font-medium ${
-                      active ? "text-blue-600" : "text-gray-500"
-                    }`}
+                    className={`text-xs font-medium ${active ? "text-blue-600" : "text-gray-500"
+                      }`}
                   >
-                    {p.label}
+                    {formatPricePresetLabel(p)}
                   </Text>
                 </TouchableOpacity>
               );

@@ -1,12 +1,12 @@
 import FilterModal from "@/components/FilterModal";
 import PropertyCard from "@/components/PropertyCard";
 import { supabase } from "@/lib/supabase";
-import { formatPrice } from "@/lib/utils";
+import { formatPriceRange } from "@/lib/utils";
 import { useFilterStore } from "@/store/filterStore";
 import { Property } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -50,11 +50,7 @@ export default function SearchScreen() {
     maxPrice !== null,
   ].filter(Boolean).length;
 
-  useEffect(() => {
-    fetchResults();
-  }, [search, type, bedrooms, minPrice, maxPrice]);
-
-  const fetchResults = async () => {
+  const fetchResults = useCallback(async () => {
     setLoading(true);
 
     let query = supabase.from("properties").select("*");
@@ -71,29 +67,31 @@ export default function SearchScreen() {
       query = query.eq("bedrooms", bedrooms);
     }
 
-    if (minPrice) {
+    if (minPrice !== null) {
       query = query.gte("price", minPrice);
     }
 
-    if (maxPrice) {
+    if (maxPrice !== null) {
       query = query.lte("price", maxPrice);
     }
 
     const { data } = await query.order("created_at", { ascending: false });
 
-    setResults(data ?? []);
+    setResults((data ?? []) as Property[]);
     setLoading(false);
-  };
+  }, [bedrooms, maxPrice, minPrice, search, type]);
+
+  useEffect(() => {
+    void fetchResults();
+  }, [fetchResults]);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
-      {/* Header */}
       <View className="px-5 pt-4 pb-3">
         <Text className="text-2xl font-bold text-gray-900 mb-4">
           Find Property
         </Text>
 
-        {/* Search Bar + Filter Button */}
         <View className="flex-row items-center gap-3">
           <View
             className="flex-1 flex-row items-center bg-white rounded-2xl px-4 gap-3"
@@ -121,11 +119,11 @@ export default function SearchScreen() {
             )}
           </View>
 
-          {/* Filter Button */}
           <TouchableOpacity
             onPress={() => setShowFilters(true)}
-            className={`w-12 h-12 rounded-2xl items-center justify-center ${activeFilterCount > 0 ? "bg-blue-600" : "bg-white"
-              }`}
+            className={`w-12 h-12 rounded-2xl items-center justify-center ${
+              activeFilterCount > 0 ? "bg-blue-600" : "bg-white"
+            }`}
             style={{
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 1 },
@@ -149,7 +147,6 @@ export default function SearchScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Active Filter Chips */}
         {activeFilterCount > 0 && (
           <View className="flex-row flex-wrap gap-2 mt-3">
             {type && (
@@ -178,11 +175,7 @@ export default function SearchScreen() {
             {(minPrice !== null || maxPrice !== null) && (
               <View className="flex-row items-center bg-blue-50 border border-blue-200 rounded-full px-3 py-1 gap-1">
                 <Text className="text-blue-700 text-xs font-semibold">
-                  {minPrice && maxPrice
-                    ? `${formatPrice(minPrice)} – ${formatPrice(maxPrice)}`
-                    : minPrice
-                      ? `From ${formatPrice(minPrice)}`
-                      : `Up to ${formatPrice(maxPrice!)}`}
+                  {formatPriceRange(minPrice, maxPrice)}
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -198,7 +191,6 @@ export default function SearchScreen() {
         )}
       </View>
 
-      {/* Results */}
       <FlatList
         data={results}
         keyExtractor={(item) => item.id}
@@ -227,7 +219,6 @@ export default function SearchScreen() {
         }
       />
 
-      {/* Filter Modal */}
       <FilterModal
         visible={showFilters}
         onClose={() => setShowFilters(false)}

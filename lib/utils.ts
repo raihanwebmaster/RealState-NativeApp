@@ -30,3 +30,22 @@ export const formatPrice = (value: number | string): string => {
 
 export const formatAreaSqft = (value: number | string): string =>
   `${value} ft\u00B2`;
+
+export const formatPriceRange = (
+  minPrice: number | string | null,
+  maxPrice: number | string | null,
+): string => {
+  if (minPrice !== null && maxPrice !== null) {
+    return `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
+  }
+
+  if (minPrice !== null) {
+    return `From ${formatPrice(minPrice)}`;
+  }
+
+  if (maxPrice !== null) {
+    return `Up to ${formatPrice(maxPrice)}`;
+  }
+
+  return "Any price";
+};
