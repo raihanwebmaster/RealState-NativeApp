@@ -1,25 +1,32 @@
 import { useSavedProperty } from '@/hooks/useSavedProperty'
 import { useSupabase } from '@/hooks/useSuperbase'
 import { formatPrice } from '@/lib/utils'
+import { useUserStore } from '@/store/userStore'
 import { Property } from '@/types'
 import { Ionicons } from '@expo/vector-icons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Dimensions, FlatList, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, FlatList, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import ImageViewing from "react-native-image-viewing"
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { WebView } from "react-native-webview"
 
+
 const { width } = Dimensions.get("window");
+const ADMIN_PHONE = "+393274736370"; 
+
 
 export default function PropertyDetails() {
   const { id, from } = useLocalSearchParams<{ id: string; from?: string }>()
   const router = useRouter()
+  const isAdmin = useUserStore((state) => state.isAdmin);
+
 
   const [property, setProperty] = useState<Property | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeIndex, setActiveIndex] = useState(0)
   const [expanded, setExpanded] = useState(false)
-  const [, setImageViewerVisible] = useState(false)
+  const [imageViewerVisible, setImageViewerVisible] = useState(false)
 
   const authSupabase = useSupabase();
   const fetchProperty = useCallback(async () => {
@@ -98,6 +105,45 @@ export default function PropertyDetails() {
   const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${property.longitude - 0.003
     }%2C${property.latitude - 0.003}%2C${property.longitude + 0.003}%2C${property.latitude + 0.003
     }&layer=mapnik&marker=${property.latitude}%2C${property.longitude}`;
+
+  const handleContact = () => {
+    const message = `Hi! I'm interested in the property: ${property?.title}`;
+    const url = `https://wa.me/${ADMIN_PHONE}?text=${encodeURIComponent(
+      message
+    )}`;
+    Linking.openURL(url);
+  };
+
+  const handleMarkSold = () => {
+    Alert.alert("Mark as Sold", "Are you sure?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Mark Sold",
+        onPress: async () => {
+          await authSupabase
+            .from("properties")
+            .update({ is_sold: true })
+            .eq("id", id);
+          setProperty((prev) => (prev ? { ...prev, is_sold: true } : prev));
+        },
+      },
+    ]);
+  };
+
+
+  const handleDelete = () => {
+    Alert.alert("Delete Property", "Are you sure?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          await authSupabase.from("properties").delete().eq("id", id);
+          router.replace("/(root)/(tabs)");
+        },
+      },
+    ]);
+  };
 
 
 
@@ -263,10 +309,51 @@ export default function PropertyDetails() {
               </Text>
             </View>
           </TouchableOpacity>
-
-
+          <TouchableOpacity
+            onPress={handleContact}
+            className="flex-row items-center justify-center gap-2 bg-green-600 py-4 rounded-2xl mb-4"
+          >
+            <Ionicons name="logo-whatsapp" size={20} color="white" />
+            <Text className="text-white font-bold text-base">
+              Contact Agent
+            </Text>
+          </TouchableOpacity>
+          {/* Admin Actions */}
+          {isAdmin && (
+            <View className="flex-row gap-3">
+              {!property.is_sold && (
+                <TouchableOpacity
+                  onPress={handleMarkSold}
+                  className="flex-1 flex-row items-center justify-center gap-2 bg-amber-50 py-4 rounded-2xl border border-amber-200"
+                >
+                  <Ionicons
+                    name="checkmark-circle-outline"
+                    size={18}
+                    color="#D97706"
+                  />
+                  <Text className="text-amber-600 font-semibold">
+                    Mark Sold
+                  </Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                onPress={handleDelete}
+                className="flex-1 flex-row items-center justify-center gap-2 bg-red-50 py-4 rounded-2xl border border-red-100"
+              >
+                <Ionicons name="trash-outline" size={18} color="#EF4444" />
+                <Text className="text-red-500 font-semibold">Delete</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </ScrollView>
+        {/* Image Viewer */}
+      <ImageViewing
+        images={property?.images?.map((uri) => ({ uri })) ?? []}
+        imageIndex={activeIndex}
+        visible={imageViewerVisible}
+        onRequestClose={() => setImageViewerVisible(false)}
+      />
     </View>
 
   )
