@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "RealState",
-    "slug": "realstate",
+    "name": "Real Estate",
+    "slug": "real-estate",
     "description": "Mobile real estate app built with Expo and React Native.",
     "version": "1.0.0",
     "platforms": ["ios", "android", "web"],
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "realstate",
+    "scheme": "realestate",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
@@ -32,14 +32,14 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow RealState to access your location even when you are not using the app.",
-          "locationWhenInUsePermission": "Allow RealState to access your location while you are using the app."
+          "locationAlwaysAndWhenInUsePermission": "Allow Real Estate to access your location even when you are not using the app.",
+          "locationWhenInUsePermission": "Allow Real Estate to access your location while you are using the app."
         }
       ],
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/realstate.png",
+          "image": "./assets/images/real-estate.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",

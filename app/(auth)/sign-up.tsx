@@ -43,7 +43,7 @@ const clerkFieldMap: Record<string, keyof SignUpFieldErrors> = {
   verification_code: 'code',
 }
 
-const SIGN_UP_START_OVER_KEY = 'realstate_sign_up_start_over'
+const SIGN_UP_START_OVER_KEY = 'real_estate_sign_up_start_over'
 
 function getClerkMessage(error: ClerkErrorItem) {
   return error.longMessage || error.message || 'Something went wrong. Please try again.'
@@ -240,7 +240,7 @@ export default function SignUP() {
       >
         <View className="flex-1 justify-center px-6 py-12">
           <Image
-            source={require('../../assets/images/realstate.png')}
+            source={require('../../assets/images/real-estate.png')}
             className="w-32 h-24 mb-8"
             resizeMode="contain"
           />
@@ -306,7 +306,7 @@ export default function SignUP() {
       >
         <View className="flex-1 justify-center px-6 py-12">
           <Image
-            source={require('../../assets/images/realstate.png')}
+            source={require('../../assets/images/real-estate.png')}
             className="w-32 h-24 mb-8"
             resizeMode="contain"
           />

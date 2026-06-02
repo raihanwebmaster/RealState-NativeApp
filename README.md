@@ -1,6 +1,6 @@
-# RealState Native App
+# Real Estate Native App
 
-RealState is a mobile real estate marketplace app built with Expo SDK 54, React Native, Expo Router, Clerk, Supabase, and NativeWind. It lets users browse property listings, search and filter listings, view detailed property pages, save favorites, contact the agent, and view listing locations on a map.
+Real Estate is a mobile real estate marketplace app built with Expo SDK 54, React Native, Expo Router, Clerk, Supabase, and NativeWind. It lets users browse property listings, search and filter listings, view detailed property pages, save favorites, contact the agent, and view listing locations on a map.
 
 The app also includes an admin listing flow for creating new properties, uploading photos, marking properties as sold, and deleting listings.
 

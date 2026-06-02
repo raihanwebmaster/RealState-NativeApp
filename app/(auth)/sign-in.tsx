@@ -240,7 +240,7 @@ export default function SignIn() {
       >
         <View className="flex-1 justify-center px-6 py-12">
           <Image
-            source={require('../../assets/images/realstate.png')}
+            source={require('../../assets/images/real-estate.png')}
             className="w-32 h-24 mb-8"
             resizeMode="contain"
           />
@@ -298,7 +298,7 @@ export default function SignIn() {
       >
         <View className="flex-1 justify-center px-6 py-12">
           <Image
-            source={require('../../assets/images/realstate.png')}
+            source={require('../../assets/images/real-estate.png')}
             className="w-32 h-24 mb-8"
             resizeMode="contain"
           />

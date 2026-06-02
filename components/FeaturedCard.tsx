@@ -31,7 +31,7 @@ export default function FeaturedCard({ property }: { property: Property }) {
                 source={
                     imageUri
                         ? { uri: imageUri }
-                        : require("../assets/images/realstate.png")
+                        : require("../assets/images/real-estate.png")
                 }
                 className="w-full h-44 bg-gray-100"
                 resizeMode={"cover"}
