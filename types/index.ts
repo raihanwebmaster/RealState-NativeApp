@@ -16,3 +16,4 @@ export interface Property {
   is_sold: boolean;
   created_at: string;
 }
+

@@ -1,7 +1,6 @@
 import { ClerkProvider } from '@clerk/expo'
 import { tokenCache } from '@clerk/expo/token-cache'
 import { Slot } from 'expo-router'
-import { StatusBar } from 'expo-status-bar'
 import { KeyboardProvider } from 'react-native-keyboard-controller'
 import "../global.css"
 
@@ -15,7 +14,7 @@ export default function RootLayout() {
   return (
     <KeyboardProvider>
       <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-        <StatusBar style="dark" />
+        {/* <StatusBar style="dark" /> */}
         <Slot />
       </ClerkProvider>
     </KeyboardProvider>
