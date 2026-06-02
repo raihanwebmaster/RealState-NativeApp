@@ -80,7 +80,7 @@ export default function Saved() {
             />
           )}
           ListEmptyComponent={
-            <View className="flex-1 items-center justify-center py-24">
+            <View className="flex-1 items-center justify-center">
               <View className="w-20 h-20 bg-red-50 rounded-full items-center justify-center mb-4">
                 <Ionicons name="heart-outline" size={36} color="#EF4444" />
               </View>
