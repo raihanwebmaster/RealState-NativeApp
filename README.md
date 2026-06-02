@@ -18,21 +18,49 @@ The core MVP is complete.
 
 Screenshots are stored in `docs/screenshots/` as portrait phone mockups.
 
-| Sign In | Sign Up | Home |
-| --- | --- | --- |
-| <img src="docs/screenshots/sign-in-portrait.png" width="220" alt="Sign in screen" /> | <img src="docs/screenshots/sign-up-portrait.png" width="220" alt="Sign up screen" /> | <img src="docs/screenshots/home-portrait.png" width="220" alt="Home screen" /> |
+<p align="center">
+  <strong>Sign In</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <strong>Sign Up</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <strong>Home</strong>
+</p>
+<p align="center">
+  <img src="docs/screenshots/sign-in-portrait.png" width="220" alt="Sign in screen" />
+  <img src="docs/screenshots/sign-up-portrait.png" width="220" alt="Sign up screen" />
+  <img src="docs/screenshots/home-portrait.png" width="220" alt="Home screen" />
+</p>
 
-| Search | Filters | Add Property |
-| --- | --- | --- |
-| <img src="docs/screenshots/search-portrait.png" width="220" alt="Search screen" /> | <img src="docs/screenshots/search_2-portrait.png" width="220" alt="Filters screen" /> | <img src="docs/screenshots/add-property-portrait.png" width="220" alt="Add property screen" /> |
+<p align="center">
+  <strong>Search</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <strong>Filters</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <strong>Add Property</strong>
+</p>
+<p align="center">
+  <img src="docs/screenshots/search-portrait.png" width="220" alt="Search screen" />
+  <img src="docs/screenshots/search_2-portrait.png" width="220" alt="Filters screen" />
+  <img src="docs/screenshots/add-property-portrait.png" width="220" alt="Add property screen" />
+</p>
 
-| Add Details | Saved | Empty Saved |
-| --- | --- | --- |
-| <img src="docs/screenshots/add-property_2-portrait.png" width="220" alt="Add property details screen" /> | <img src="docs/screenshots/saved-portrait.png" width="220" alt="Saved properties screen" /> | <img src="docs/screenshots/saved_2-portrait.png" width="220" alt="Empty saved properties screen" /> |
+<p align="center">
+  <strong>Add Details</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <strong>Saved</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <strong>Empty Saved</strong>
+</p>
+<p align="center">
+  <img src="docs/screenshots/add-property_2-portrait.png" width="220" alt="Add property details screen" />
+  <img src="docs/screenshots/saved-portrait.png" width="220" alt="Saved properties screen" />
+  <img src="docs/screenshots/saved_2-portrait.png" width="220" alt="Empty saved properties screen" />
+</p>
 
-| Profile | Property Details | Location And Admin Actions |
-| --- | --- | --- |
-| <img src="docs/screenshots/profile-portrait.png" width="220" alt="Profile screen" /> | <img src="docs/screenshots/property-details-portrait.png" width="220" alt="Property details screen" /> | <img src="docs/screenshots/property-details_2-portrait.png" width="220" alt="Property location and admin actions screen" /> |
+<p align="center">
+  <strong>Profile</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <strong>Property Details</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <strong>Location And Admin Actions</strong>
+</p>
+<p align="center">
+  <img src="docs/screenshots/profile-portrait.png" width="220" alt="Profile screen" />
+  <img src="docs/screenshots/property-details-portrait.png" width="220" alt="Property details screen" />
+  <img src="docs/screenshots/property-details_2-portrait.png" width="220" alt="Property location and admin actions screen" />
+</p>
 
 ## Key Features
 
