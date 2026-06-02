@@ -2,7 +2,7 @@ import { useSupabase } from '@/hooks/useSuperbase';
 import { Property } from '@/types';
 import { useAuth } from '@clerk/expo';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -13,12 +13,34 @@ interface SavedProperty {
 }
 
 export default function Saved() {
-  const {userId} = useAuth();
+  const { userId } = useAuth();
   const authSupabase = useSupabase();
   const router = useRouter();
 
-  const [saved, setSaved]= useState<SavedProperty[]>([]);
+  const [saved, setSaved] = useState<SavedProperty[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const fetchSavedProperties = useCallback(async () => {
+    setLoading(true);
+
+    const { data, error } = await authSupabase
+      .from("saved_properties")
+      .select("id, property_id, property:properties(*)")
+      .eq("user_clerk_id", userId)
+      .order("id", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching saved properties:", error);
+    } else {
+      setSaved(data as SavedProperty[]);
+    }
+
+    setLoading(false);
+  }, [userId]);
+
+  useEffect(() => {
+    fetchSavedProperties();
+  }, [fetchSavedProperties]);
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
