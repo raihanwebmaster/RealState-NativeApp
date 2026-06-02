@@ -68,7 +68,12 @@ export default function Saved() {
         <FlatList
           data={saved}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+          style={{ flex: 1 }}
+          contentContainerStyle={
+            saved.length === 0
+              ? { flexGrow: 1, justifyContent: "center", padding: 20 }
+              : { padding: 20, paddingBottom: 100 }
+          }
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <PropertyCard
