@@ -6,7 +6,7 @@ import { Property } from '@/types'
 import { Ionicons } from '@expo/vector-icons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Alert, Dimensions, FlatList, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Dimensions, FlatList, Image, Linking, NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import ImageViewing from "react-native-image-viewing"
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { WebView } from "react-native-webview"
@@ -76,12 +76,10 @@ export default function PropertyDetails() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-gray-50">
-        <View className="flex-1 items-center justify-center bg-white">
-          <Text className="text-gray-500">Loading property...</Text>
-        </View>
-      </SafeAreaView>
-    )
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color="#2563EB" />
+      </View>
+    );
   }
 
   if (!property) {
