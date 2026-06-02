@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { formatPrice } from "@/lib/utils";
+import { EURO_SYMBOL, formatPrice } from "@/lib/utils";
 import { PropertyType, useFilterStore } from "@/store/filterStore";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
@@ -39,8 +39,6 @@ const BED_OPTIONS: FilterOption<number | null>[] = [
   { label: "3", value: 3 },
   { label: "4+", value: 4 },
 ];
-
-const EURO_SYMBOL = "\u20AC";
 
 const formatOptionLabel = (value: string): string =>
   value

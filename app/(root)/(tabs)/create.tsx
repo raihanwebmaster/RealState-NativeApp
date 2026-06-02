@@ -1,5 +1,6 @@
 
 import { useSupabase } from "@/hooks/useSuperbase";
+import { EURO_SYMBOL } from "@/lib/utils";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
@@ -24,6 +25,8 @@ type PropertyType = (typeof TYPES)[number];
 
 const MIN_PRICE = 1;
 const MAX_PRICE = 999_999_999;
+const formatPriceLimit = (value: number) =>
+  `${EURO_SYMBOL}${value.toLocaleString("en-US")}`;
 
 const inputClass =
   "bg-white border border-gray-200 rounded-2xl px-4 py-3 text-gray-800";
@@ -169,7 +172,7 @@ export default function CreatePropertyScreen() {
         latitude: String(location.coords.latitude),
         longitude: String(location.coords.longitude),
       });
-    } catch (err) {
+    } catch {
       Alert.alert("Error", "Could not detect location. Enter manually.");
     } finally {
       setDetectingLocation(false);
@@ -186,11 +189,14 @@ export default function CreatePropertyScreen() {
 
     const priceNum = Number(form.price);
     if (isNaN(priceNum) || priceNum < MIN_PRICE)
-      return Alert.alert("Validation", "Price must be greater than ₹0.");
+      return Alert.alert(
+        "Validation",
+        `Price must be greater than ${formatPriceLimit(0)}.`,
+      );
     if (priceNum > MAX_PRICE)
       return Alert.alert(
         "Validation",
-        `Price cannot exceed ₹${MAX_PRICE.toLocaleString("en-IN")}.`
+        `Price cannot exceed ${formatPriceLimit(MAX_PRICE)}.`,
       );
 
     if (!form.address.trim())
@@ -403,7 +409,7 @@ export default function CreatePropertyScreen() {
 
           {/* Price */}
           <View className={sectionClass}>
-            <Text className={labelClass}>Price (₹)</Text>
+            <Text className={labelClass}>Price ({EURO_SYMBOL})</Text>
             <TextInput
               className={inputClass}
               placeholder="e.g. 5000000"
@@ -413,7 +419,8 @@ export default function CreatePropertyScreen() {
               keyboardType="numeric"
             />
             <Text className="text-xs text-gray-400 mt-1.5 ml-1">
-              Valid range: ₹1 – ₹{MAX_PRICE.toLocaleString("en-IN")}
+              Valid range: {formatPriceLimit(MIN_PRICE)} -{" "}
+              {formatPriceLimit(MAX_PRICE)}
             </Text>
           </View>
 

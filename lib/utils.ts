@@ -1,7 +1,7 @@
 const formatCompactNumber = (value: number): string =>
   value.toFixed(1).replace(/\.0$/, "");
 
-const EURO_SYMBOL = "\u20AC";
+export const EURO_SYMBOL = "\u20AC";
 
 export const formatPrice = (value: number | string): string => {
   const price = Number(value);
