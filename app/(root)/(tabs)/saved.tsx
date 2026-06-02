@@ -22,8 +22,6 @@ export default function Saved() {
   const [saved, setSaved] = useState<SavedProperty[]>([]);
   const [loading, setLoading] = useState(false);
 
-  console.log(saved,'saved')
-
   const fetchSavedProperties = useCallback(async () => {
     setLoading(true);
 
