@@ -13,7 +13,7 @@ import { WebView } from "react-native-webview"
 
 
 const { width } = Dimensions.get("window");
-const ADMIN_PHONE = "+393274736370"; 
+const ADMIN_PHONE = "+393274736370";
 
 
 export default function PropertyDetails() {
@@ -280,19 +280,7 @@ export default function PropertyDetails() {
           </View>
 
           {/* Map Preview */}
-          <TouchableOpacity
-            onPress={() =>
-              router.push({
-                pathname: "/(root)/property/map",
-                params: {
-                  latitude: property.latitude,
-                  longitude: property.longitude,
-                  title: property.title,
-                  address: `${property.address}, ${property.city}`,
-                },
-              })
-            }
-            activeOpacity={0.9}
+          <View
             className="rounded-2xl overflow-hidden mb-6"
             style={{ height: 200 }}
           >
@@ -302,13 +290,27 @@ export default function PropertyDetails() {
               scrollEnabled={false}
               pointerEvents="none"
             />
-            <View className="absolute bottom-3 right-3 bg-white/90 px-3 py-1 rounded-full flex-row items-center gap-1">
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: "/(root)/property/map",
+                  params: {
+                    latitude: property.latitude,
+                    longitude: property.longitude,
+                    title: property.title,
+                    address: `${property.address}, ${property.city}`,
+                  },
+                })
+              }
+              activeOpacity={0.9}
+              className="absolute bottom-3 right-3 bg-white/90 px-3 py-1 rounded-full flex-row items-center gap-1"
+            >
               <Ionicons name="expand-outline" size={12} color="#374151" />
               <Text className="text-gray-600 text-xs font-medium">
                 Tap to expand
               </Text>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
           <TouchableOpacity
             onPress={handleContact}
             className="flex-row items-center justify-center gap-2 bg-green-600 py-4 rounded-2xl mb-4"
@@ -347,7 +349,7 @@ export default function PropertyDetails() {
           )}
         </View>
       </ScrollView>
-        {/* Image Viewer */}
+      {/* Image Viewer */}
       <ImageViewing
         images={property?.images?.map((uri) => ({ uri })) ?? []}
         imageIndex={activeIndex}
