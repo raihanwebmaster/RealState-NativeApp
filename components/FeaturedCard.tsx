@@ -16,7 +16,7 @@ export default function FeaturedCard({ property }: { property: Property }) {
                     params: { id: property.id },
                 })
             }
-            className="w-72 mr-4 rounded-3xl overflow-hidden bg-white"
+            className="w-72 mr-4 rounded-3xl overflow-hidden bg-white mb-4"
             style={{
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 2 },

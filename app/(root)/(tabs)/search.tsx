@@ -197,7 +197,7 @@ export default function SearchScreen() {
       <FlatList
         data={results}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+        contentContainerStyle={{ padding: 20, paddingBottom: 10 }}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <PropertyCard property={item} source="search" />
