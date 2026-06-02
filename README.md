@@ -16,23 +16,23 @@ The core MVP is complete.
 
 ## Screenshots
 
-Screenshots are stored in `docs/`. Portrait mobile screenshots work best for the README layout.
+Screenshots are stored in `docs/screenshots/` as portrait phone mockups.
 
 | Sign In | Sign Up | Home |
 | --- | --- | --- |
-| <img src="docs/sign-in.jpeg" width="220" alt="Sign in screen" /> | <img src="docs/sign-up.jpeg" width="220" alt="Sign up screen" /> | <img src="docs/home.jpeg" width="220" alt="Home screen" /> |
+| <img src="docs/screenshots/sign-in-portrait.png" width="220" alt="Sign in screen" /> | <img src="docs/screenshots/sign-up-portrait.png" width="220" alt="Sign up screen" /> | <img src="docs/screenshots/home-portrait.png" width="220" alt="Home screen" /> |
 
 | Search | Filters | Add Property |
 | --- | --- | --- |
-| <img src="docs/search.jpeg" width="220" alt="Search screen" /> | <img src="docs/search_2.jpeg" width="220" alt="Filters screen" /> | <img src="docs/add-property.jpeg" width="220" alt="Add property screen" /> |
+| <img src="docs/screenshots/search-portrait.png" width="220" alt="Search screen" /> | <img src="docs/screenshots/search_2-portrait.png" width="220" alt="Filters screen" /> | <img src="docs/screenshots/add-property-portrait.png" width="220" alt="Add property screen" /> |
 
 | Add Details | Saved | Empty Saved |
 | --- | --- | --- |
-| <img src="docs/add-property_2.jpeg" width="220" alt="Add property details screen" /> | <img src="docs/saved.jpeg" width="220" alt="Saved properties screen" /> | <img src="docs/saved_2.jpeg" width="220" alt="Empty saved properties screen" /> |
+| <img src="docs/screenshots/add-property_2-portrait.png" width="220" alt="Add property details screen" /> | <img src="docs/screenshots/saved-portrait.png" width="220" alt="Saved properties screen" /> | <img src="docs/screenshots/saved_2-portrait.png" width="220" alt="Empty saved properties screen" /> |
 
 | Profile | Property Details | Location And Admin Actions |
 | --- | --- | --- |
-| <img src="docs/profile.jpeg" width="220" alt="Profile screen" /> | <img src="docs/property-details.jpeg" width="220" alt="Property details screen" /> | <img src="docs/property-details_2.jpeg" width="220" alt="Property location and admin actions screen" /> |
+| <img src="docs/screenshots/profile-portrait.png" width="220" alt="Profile screen" /> | <img src="docs/screenshots/property-details-portrait.png" width="220" alt="Property details screen" /> | <img src="docs/screenshots/property-details_2-portrait.png" width="220" alt="Property location and admin actions screen" /> |
 
 ## Key Features
 
